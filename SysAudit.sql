@@ -62,3 +62,24 @@ AND (   (PSPCMTXT.OBJECTVALUE3 = 'OnExecute' AND AP.APPCLASSID=PSPCMTXT.OBJECTVA
 	 )
 )
 
+----------------------------
+-- Row Security Permission List specified does not exist in the Permission List table
+----------------------------
+SELECT * FROM PSOPRDEFN WHERE ROWSECCLASS <> ' ' AND NOT EXISTS (SELECT 'X' FROM PSCLASSDEFN C WHERE C.CLASSID=PSOPRDEFN.ROWSECCLASS);
+
+----------------------------
+-- Query Definition Record name does not exist in the Record Definition table
+----------------------------
+SELECT * FROM PSQRYRECORD where RECNAME <> ' ' AND NOT EXISTS (SELECT 'X' FROM PSRECDEFN R WHERE R.RECNAME=PSQRYRECORD.RECNAME) ORDER BY 2
+----------------------------
+-- Query Field Record name does not exist in the Record Definition table
+----------------------------
+SELECT DISTINCT QRYNAME, RECNAME FROM PSQRYFIELD where RECNAME <> ' ' AND NOT EXISTS (SELECT 'X' FROM PSRECDEFN R WHERE R.RECNAME=PSQRYFIELD.RECNAME) ORDER BY 1
+----------------------------
+-- Query Definition Field name does not exist in the Field Definition table
+----------------------------
+SELECT QRYNAME, RECNAME, FIELDNAME FROM PSQRYFIELD where FIELDNAME <> ' ' AND NOT EXISTS (SELECT 'X' FROM PSRECFIELDDB R WHERE R.RECNAME=PSQRYFIELD.RECNAME AND R.FIELDNAME=PSQRYFIELD.FIELDNAME) ORDER BY 1,2,3
+----------------------------
+-- Following Queries Do Not Exist in PSQRYRECORD
+----------------------------
+SELECT * FROM PSQRYDEFN WHERE NOT EXISTS (SELECT 'X' FROM PSQRYRECORD R WHERE R.QRYNAME=PSQRYDEFN.QRYNAME AND EXISTS (SELECT 'X' FROM PSRECDEFN R1 WHERE R1.RECNAME=R.RECNAME)) ORDER BY 2
